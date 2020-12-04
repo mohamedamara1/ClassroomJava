@@ -29,13 +29,20 @@ import java.util.List;
 public class Principal{
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
+
         // Build a new authorized API client service.
         Classroom classroom_service = ClassroomQuickstart.get_service();
+        Drive drive_service = DriveQuickstart.get_service();
 
-        ListCoursesResponse response = classroom_service.courses().list()
-                .setPageSize(10)
-                .execute();
-        List<Course> courses = response.getCourses();
+
+
+        Etudiant mohamed = new Etudiant(classroom_service, drive_service);
+        //System.out.println("infromations : "+mohamed.getName());
+        mohamed.download_everything();
+
+
+/*
+        
         if (courses == null || courses.size() == 0) {
             System.out.println("No courses found.");
         } else {
@@ -61,7 +68,7 @@ public class Principal{
             }
 
         }
-        
-    }  
+        */
+    } 
    
 }
