@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+
+import com.google.common.collect.ImmutableList; 
+import java.util.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +33,15 @@ public class ClassroomQuickstart {
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(ClassroomScopes.CLASSROOM_COURSES_READONLY);
+
+    public static final List<String> SCOPES = Arrays.asList(
+        ClassroomScopes.CLASSROOM_COURSES, //https://www.googleapis.com/auth/admin.directory.group
+        ClassroomScopes.CLASSROOM_ANNOUNCEMENTS,
+        ClassroomScopes.CLASSROOM_COURSEWORK_ME_READONLY
+       // "https://www.googleapis.com/auth/classroom.topics"
+        );
+    //private static final ImmutableList<String> SCOPES = ImmutableList.of(
+     //   "ClassroomScopes.CLASSROOM_COURSES", "ClassroomScopes.CLASSROOM_ANNOUNCEMENTS");
     private static final String CREDENTIALS_FILE_PATH = "/credentials-classroom.json";
 
     /**
