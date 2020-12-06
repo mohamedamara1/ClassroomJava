@@ -30,7 +30,8 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class Etudiant extends Utilisateur{
 	private Student student;
@@ -47,6 +48,8 @@ public class Etudiant extends Utilisateur{
 	public void download_everything() throws IOException, GeneralSecurityException{
 
 
+                Map<String, ArrayList<String>> files_map = new HashMap<String, ArrayList<String>>();
+
 		File wrapper_folder = new File("./ClassroomFolders");
 		if (! wrapper_folder.exists())
 			wrapper_folder.mkdir();
@@ -55,6 +58,8 @@ public class Etudiant extends Utilisateur{
                 List<Course> courses = response.getCourses();	
 
                 for (Course course : courses){
+                        ArrayList<String> new_downloads = new ArrayList<String>();
+
                 	String course_name = course.getName();
                 	String course_id = course.getId();
 
@@ -74,22 +79,27 @@ public class Etudiant extends Utilisateur{
                         ListAnnouncementsResponse announcements_reponse = classroom_service.courses().announcements().list(course_id).execute();
                         List<Announcement> announcements = announcements_reponse.getAnnouncements();
                         System.out.println("Downloading files of "+course_name);
-                        download_announcements(announcements, course_name);
-
+                        try{
+                                new_downloads.addAll(download_announcements(announcements, course_name));
+                        }
+                        catch(NullPointerException e){
+                                System.out.println("This Course does't have any announcements!");
+                        }
 
 
                         ListCourseWorkResponse works_response = classroom_service.courses().courseWork().list(course_id).execute();
                         List<CourseWork> works = works_response.getCourseWork();
                         System.out.println("Downloading course works of "+course_name);
                         try{
-                                download_works(works, course_name);
+                                new_downloads.addAll(download_works(works, course_name));
                         }
 
                         catch (NullPointerException e){
                                 System.out.println("this course doesn't have any work!");
                         }
 
-
+                        if (new_downloads.size() != 0)
+                                files_map.put(course_name, new_downloads);
 
 
 
@@ -108,12 +118,32 @@ public class Etudiant extends Utilisateur{
 
                 }
 
+                //printing newly downloaded files
+                System.out.println("\n*********** Newly downloaded files for each course....... : **************\n");
+                if ( files_map.size() == 0 ) 
+                        System.out.println("None!");
+                else
+                {
+                        try{
+                                for (Map.Entry<String, ArrayList<String>> course: files_map.entrySet()){
+                                        System.out.println("\n-------------"+course.getKey()+"-----------------\n");
+                                        for( String name : course.getValue()){
+                                                System.out.println(name);
+                                        }
+                                }
 
+                        }
+                        catch (NullPointerException e){
+
+                        }                        
+                }   
 
 
 	}
 
-        public  void download_announcements(List<Announcement> announcements, String course_name){
+        public  ArrayList<String> download_announcements(List<Announcement> announcements, String course_name) throws NullPointerException{
+                ArrayList<String> downloads = new ArrayList<String>();
+
                 String saving_path = "./ClassroomFolders/"+course_name;
                 List<File> files = new ArrayList<File>();
                 super.listf(saving_path, files);
@@ -130,6 +160,7 @@ public class Etudiant extends Utilisateur{
                                                 System.out.println("Downloading : "+file_name);
                                                 try{
                                                       super.file_download(file_id, file_name, saving_path, this.drive_service);
+                                                      downloads.add(file_name);
 
                                                 }
                                                 catch(IOException e) {
@@ -140,10 +171,13 @@ public class Etudiant extends Utilisateur{
                         }
                         catch(NullPointerException e){
                         }
-                }               
+                }
+                return downloads;               
         }
 
-        public void download_works(List<CourseWork> works, String course_name) throws NullPointerException{
+        public ArrayList<String> download_works(List<CourseWork> works, String course_name) throws NullPointerException{
+                        ArrayList<String> downloads = new ArrayList<String>();
+
                         String saving_path = "./ClassroomFolders/"+course_name;
                         List<File> files = new ArrayList<File>();
                         super.listf(saving_path, files);      
@@ -160,7 +194,7 @@ public class Etudiant extends Utilisateur{
                                                         System.out.println("Downloading : "+file_name);
                                                         try{
                                                               super.file_download(file_id, file_name, saving_path, this.drive_service);
-
+                                                              downloads.add(file_name);
                                                         }
                                                         catch(IOException e) {
                                                         e.printStackTrace();
@@ -172,6 +206,7 @@ public class Etudiant extends Utilisateur{
                                 }
                              
                 }   
+                return downloads;
         }
 
         public boolean verif(String file_name){
