@@ -37,7 +37,9 @@ public class ClassroomQuickstart {
     public static final List<String> SCOPES = Arrays.asList(
         ClassroomScopes.CLASSROOM_COURSES, //https://www.googleapis.com/auth/admin.directory.group
         ClassroomScopes.CLASSROOM_ANNOUNCEMENTS,
-        ClassroomScopes.CLASSROOM_COURSEWORK_ME_READONLY
+        ClassroomScopes.CLASSROOM_COURSEWORK_ME_READONLY,
+        ClassroomScopes.CLASSROOM_COURSEWORK_STUDENTS_READONLY,
+        ClassroomScopes.CLASSROOM_ROSTERS
        // "https://www.googleapis.com/auth/classroom.topics"
         );
     //private static final ImmutableList<String> SCOPES = ImmutableList.of(
