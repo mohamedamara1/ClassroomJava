@@ -13,6 +13,7 @@ import com.google.api.services.classroom.ClassroomScopes;
 import com.google.api.services.classroom.model.*;
 import com.google.api.services.classroom.Classroom;
 
+import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
@@ -37,38 +38,12 @@ public class Principal{
 
 
         Etudiant mohamed = new Etudiant(classroom_service, drive_service);
-        //System.out.println("infromations : "+mohamed.getName());
         mohamed.download_everything();
-
-
-/*
         
-        if (courses == null || courses.size() == 0) {
-            System.out.println("No courses found.");
-        } else {
-            System.out.println("Courses:");
-            for (Course course : courses) {
-                System.out.printf("%s\n", course.getName());
-            }
-        }
+        //Enseignant e1 = new Enseignant(classroom_service, drive_service);
+        //e1.printppl();
+        //e1.test();
 
-        // Print the names and IDs for up to 10 files.
-        Drive drive_service = DriveQuickstart.get_service();
-        FileList result = drive_service.files().list()
-                .setPageSize(10)
-                .setFields("nextPageToken, files(id, name)")
-                .execute();
-        List<File> files = result.getFiles();
-        if (files == null || files.isEmpty()) {
-            System.out.println("No files found.");
-        } else {
-            System.out.println("Files:");
-            for (File file : files) {
-                System.out.printf("%s (%s)\n", file.getName(), file.getId());
-            }
-
-        }
-        */
     } 
    
 }

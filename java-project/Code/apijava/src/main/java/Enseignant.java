@@ -80,7 +80,7 @@ public class Enseignant extends Utilisateur{
 
   
 
-	public void printppl() throws IOException, GeneralSecurityException{  
+	public void download_all_coursework() throws IOException, GeneralSecurityException{  
         
                 File wrapper_folder = new File("./ClassroomCompteRendu");
                 if (! wrapper_folder.exists())
@@ -132,6 +132,7 @@ public class Enseignant extends Utilisateur{
                     }
                 }
 
+                System.out.println("------Total downloads size : " +super.humanReadableByteCountBin(super.download_size)+" -------");
 
 	}
 
