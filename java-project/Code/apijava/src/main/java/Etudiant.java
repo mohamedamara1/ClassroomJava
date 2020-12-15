@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Scanner;
 public class Etudiant extends Utilisateur{
 	private Student student;
 	private Classroom classroom_service;
@@ -44,7 +45,23 @@ public class Etudiant extends Utilisateur{
 		this.classroom_service = classroom_service;
 		this.drive_service = drive_service;
 	}
+        public void display(){
+                Scanner sc = new Scanner(System.in);
+                int choix = -1;
+                System.out.println("PLease select one of the options that you want to execute!");
+                System.out.println("1- Download all of the classroom courses.");
+                choix = sc.nextInt();
+                if (choix == 1){
+                        try{
+                                this.download_everything();
 
+                        }
+                        catch(IOException | GeneralSecurityException e){
+                                System.out.println(e);
+                        }
+                }
+
+        }
 	public void download_everything() throws IOException, GeneralSecurityException{
 
 
@@ -54,7 +71,7 @@ public class Etudiant extends Utilisateur{
 		if (! wrapper_folder.exists())
 			wrapper_folder.mkdir();
 
-                ListCoursesResponse response = classroom_service.courses().list().setPageSize(5).execute();
+                ListCoursesResponse response = classroom_service.courses().list().execute();
                 List<Course> courses = response.getCourses();	
 
                 for (Course course : courses){

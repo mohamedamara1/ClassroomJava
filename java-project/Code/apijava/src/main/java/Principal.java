@@ -27,19 +27,51 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Scanner;
 public class Principal{
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
 
         // Build a new authorized API client service.
+        System.out.println("Login:");
         Classroom classroom_service = ClassroomQuickstart.get_service();
         Drive drive_service = DriveQuickstart.get_service();
+        int choice=0;
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Are you a teacher or a student?");
+        System.out.println("1- Student \n2- Teacher");
+
+        choice = sc.nextInt();
+        if (choice == 1){
+            Etudiant e = new Etudiant(classroom_service, drive_service);
+            e.display();
+        }
+        else if (choice == 2){
+            Enseignant prof = new Enseignant(classroom_service, drive_service);
+            prof.display();
+        }
+        else{
+            System.out.println("Bad choice, please repeat again!");
+        }
+        sc.close();
+
+
+
+
+
+
+
+
+
 
 
 
         Etudiant mohamed = new Etudiant(classroom_service, drive_service);
         mohamed.download_everything();
         
+
+
         //Enseignant e1 = new Enseignant(classroom_service, drive_service);
         //e1.printppl();
         //e1.test();
