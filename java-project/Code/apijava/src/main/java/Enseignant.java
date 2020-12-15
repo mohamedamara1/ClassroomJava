@@ -38,7 +38,8 @@ import java.util.Map;
 public class Enseignant extends Utilisateur{
 	private Teacher teacher;
 	private Classroom classroom_service;
-	private Drive drive_service;
+    private Drive drive_service;
+    static Scanner s = new Scanner(System.in);
 
 
 	public Enseignant(Classroom classroom_service, Drive drive_service){
@@ -76,6 +77,25 @@ public class Enseignant extends Utilisateur{
             }
 
         }
+    }
+
+    public void ajouter_support_td(String course_id) {	
+        File fileMetadata = new File();
+        fileMetadata.setName("mini projet.pdf");
+        java.io.File filePath = new java.io.File("./SupportTd/Mini projet  sujet A.pdf");
+        FileContent mediaContent = new FileContent("Mini projet  sujet A.pdf", filePath);
+        File drive_file = driveService.files().create(fileMetadata, mediaContent).setFields("id").execute();
+        SharedDriveFile support = setDriveFile(drive_file);
+        attachement support_file = setDriveFile(support);
+        Link support_link = getLink(support_file);
+        System.out.println("saisir le titre de TD");
+        String Title = s.nextline();
+        System.out.println("saisir la description de TD");
+        String Description = s.nextline();
+        CourseWork TD = new CourseWork().settitle(Title).setdescription(Description).setmaterials(support_link).setworkType("Assignment");
+        TD = service.courses.courseWork().create(courseId=course_id , body=TD).execute();
+
+
     }
 
   
@@ -142,5 +162,6 @@ public class Enseignant extends Utilisateur{
         "class", "txt", "r", "m", "sql", "doc", "mp3", "rar", "zip");
                 return extensions.contains(extension);
         }
+      
 
 }
