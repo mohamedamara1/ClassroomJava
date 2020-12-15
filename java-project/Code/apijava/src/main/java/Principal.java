@@ -56,26 +56,6 @@ public class Principal{
         }
         sc.close();
 
-
-
-
-
-
-
-
-
-
-
-
-        Etudiant mohamed = new Etudiant(classroom_service, drive_service);
-        mohamed.download_everything();
-        
-
-
-        //Enseignant e1 = new Enseignant(classroom_service, drive_service);
-        //e1.printppl();
-        //e1.test();
-
     } 
    
 }
