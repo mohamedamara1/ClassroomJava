@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Scanner;
 public class Etudiant extends Utilisateur{
 	private Student student;
 	private Classroom classroom_service;
@@ -44,7 +45,23 @@ public class Etudiant extends Utilisateur{
 		this.classroom_service = classroom_service;
 		this.drive_service = drive_service;
 	}
+        public void display(){
+                Scanner sc = new Scanner(System.in);
+                int choix = -1;
+                System.out.println("PLease select one of the options that you want to execute!");
+                System.out.println("1- Download all of the classroom courses.");
+                choix = sc.nextInt();
+                if (choix == 1){
+                        try{
+                                this.download_everything();
 
+                        }
+                        catch(IOException | GeneralSecurityException e){
+                                System.out.println(e);
+                        }
+                }
+
+        }
 	public void download_everything() throws IOException, GeneralSecurityException{
 
 
@@ -54,7 +71,7 @@ public class Etudiant extends Utilisateur{
 		if (! wrapper_folder.exists())
 			wrapper_folder.mkdir();
 
-                ListCoursesResponse response = classroom_service.courses().list().setPageSize(10).execute();
+                ListCoursesResponse response = classroom_service.courses().list().execute();
                 List<Course> courses = response.getCourses();	
 
                 for (Course course : courses){
@@ -102,20 +119,6 @@ public class Etudiant extends Utilisateur{
                                 files_map.put(course_name, new_downloads);
 
 
-
-                     /*   ListTopicResponse topics_response = classroom_service.courses().topics().list(course_id).execute();
-                        List<Topic> topics = topics_response.getTopic();
-                        try{
-                        for (Topic topic : topics){
-                                System.out.println(topic.getName());
-                        }
-                }
-                        catch (NullPointerException e){
-                                System.out.println("No topics in " +course_name);
-                        }
-                        */
-
-
                 }
 
                 //printing newly downloaded files
@@ -138,15 +141,22 @@ public class Etudiant extends Utilisateur{
                         }                        
                 }   
 
-
+                System.out.println("------Total downloads size : " +super.humanReadableByteCountBin(super.download_size)+" -------");
 	}
 
         public  ArrayList<String> download_announcements(List<Announcement> announcements, String course_name) throws NullPointerException{
-                ArrayList<String> downloads = new ArrayList<String>();
 
+                ArrayList<String> downloads = new ArrayList<String>();
                 String saving_path = "./ClassroomFolders/"+course_name;
+
                 List<File> files = new ArrayList<File>();
+                List<String> files_names = new ArrayList<String>();
+
                 super.listf(saving_path, files);
+
+                for (File file : files){
+                        files_names.add(file.getName());
+                }
 
                 for (Announcement announcement : announcements){
                         List<Material> materials = announcement.getMaterials();
@@ -155,8 +165,7 @@ public class Etudiant extends Utilisateur{
                                 for (Material material : materials){
                                         String file_id = material.getDriveFile().getDriveFile().getId();
                                         String file_name = material.getDriveFile().getDriveFile().getTitle();
-                                        File file = new File(saving_path+"/"+file_name);
-                                        if ( (!files.contains(file)) && verif(file_name)){
+                                        if ( (!files_names.contains(file_name)) && verif(file_name)){
                                                 System.out.println("Downloading : "+file_name);
                                                 try{
                                                       super.file_download(file_id, file_name, saving_path, this.drive_service);

@@ -13,6 +13,7 @@ import com.google.api.services.classroom.ClassroomScopes;
 import com.google.api.services.classroom.model.*;
 import com.google.api.services.classroom.Classroom;
 
+import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
@@ -26,49 +27,35 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Scanner;
 public class Principal{
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
 
         // Build a new authorized API client service.
+        System.out.println("Login:");
         Classroom classroom_service = ClassroomQuickstart.get_service();
         Drive drive_service = DriveQuickstart.get_service();
+        int choice=0;
 
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Are you a teacher or a student?");
+        System.out.println("1- Student \n2- Teacher");
 
-
-        Etudiant mohamed = new Etudiant(classroom_service, drive_service);
-        //System.out.println("infromations : "+mohamed.getName());
-        mohamed.download_everything();
-
-
-/*
-        
-        if (courses == null || courses.size() == 0) {
-            System.out.println("No courses found.");
-        } else {
-            System.out.println("Courses:");
-            for (Course course : courses) {
-                System.out.printf("%s\n", course.getName());
-            }
+        choice = sc.nextInt();
+        if (choice == 1){
+            Etudiant e = new Etudiant(classroom_service, drive_service);
+            e.display();
         }
-
-        // Print the names and IDs for up to 10 files.
-        Drive drive_service = DriveQuickstart.get_service();
-        FileList result = drive_service.files().list()
-                .setPageSize(10)
-                .setFields("nextPageToken, files(id, name)")
-                .execute();
-        List<File> files = result.getFiles();
-        if (files == null || files.isEmpty()) {
-            System.out.println("No files found.");
-        } else {
-            System.out.println("Files:");
-            for (File file : files) {
-                System.out.printf("%s (%s)\n", file.getName(), file.getId());
-            }
-
+        else if (choice == 2){
+            Enseignant prof = new Enseignant(classroom_service, drive_service);
+            prof.display();
         }
-        */
+        else{
+            System.out.println("Bad choice, please repeat again!");
+        }
+        sc.close();
+
     } 
    
 }

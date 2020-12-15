@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Scanner;
 public class Enseignant extends Utilisateur{
 	private Teacher teacher;
 	private Classroom classroom_service;
@@ -48,6 +48,89 @@ public class Enseignant extends Utilisateur{
 		this.drive_service = drive_service;
 	}
 
+    public void display() throws IOException, GeneralSecurityException{
+            Scanner sc = new Scanner(System.in);
+            int choix = -1;
+            System.out.println("PLease select one of the options that you want to execute!");
+            System.out.println("1- Download the course work (compte rendu) for a specific course.");
+
+            System.out.println("2- Download the course works in all classrooms.");
+            choix = sc.nextInt();
+            if (choix == 1){
+                File wrapper_folder = new File("./ClassroomCompteRendu");
+                if (! wrapper_folder.exists())
+                    wrapper_folder.mkdir();     
+
+                ListCoursesResponse response = classroom_service.courses().list().execute();
+                List<Course> courses = response.getCourses();   
+
+               // Map<String, ArrayList<String>> files_map = new HashMap<String, ArrayList<String>>();
+
+                Map<Integer, String> courses_dict = new HashMap<Integer, String>(); 
+                int compt = 1;
+
+                for (Course course : courses){
+
+                    System.out.println(compt+"- "+course.getName());  
+                    courses_dict.put(compt, course.getId());                  
+                    compt++;
+   
+                } 
+
+                int choix_course = sc.nextInt();
+                // get course a partit de courses_dict avec le nombre saisi dans choix_course
+                String selected_course_id = courses_dict.get(choix_course);
+                Course selected_course = classroom_service.courses().get(selected_course_id).execute();
+                String selected_course_name = selected_course.getName();
+
+                File course_folder = new File("./ClassroomCompteRendu/"+selected_course.getName());
+                if (! course_folder.exists())
+                    course_folder.mkdir();    
+
+                ListCourseWorkResponse works_response = classroom_service.courses().courseWork().list(selected_course_id).execute();
+                List<CourseWork> works = works_response.getCourseWork();
+                System.out.println("Course name : "+selected_course_name);
+
+                Map<Integer, String> work_dict = new HashMap<Integer, String>();
+                compt=1;
+                try{
+                        for (CourseWork work : works){
+
+                            System.out.println(compt+"- "+work.getTitle());  
+                            work_dict.put(compt, work.getId());                  
+                            compt++;
+
+                        }                        
+                }
+                catch(NullPointerException e){
+                    System.out.println("no course work");
+                }
+
+                int choix_work = sc.nextInt();
+
+                //get a course work a partir de work_dict avec le nombre sais dans choix_work
+                String selected_work_id = work_dict.get(choix_work);
+                CourseWork selected_work  = classroom_service.courses().courseWork().get(selected_course_id, selected_work_id).execute();
+                String selected_work_name = selected_work.getTitle();
+
+                File work_folder = new File("./ClassroomCompteRendu/"+selected_course_name+"/"+selected_work_name);
+                if (! work_folder.exists())
+                    work_folder.mkdir(); 
+
+                System.out.println("Downloading student submissions for work "+selected_work_name+" in "+selected_course_name);
+                try{
+                    download_compte_rendu(selected_course_id, selected_work_id);
+                }
+
+                catch (NullPointerException e){
+                        System.out.println("no submission!");
+                }
+            }
+            else if (choix == 2){
+                this.download_all_coursework();
+            }
+
+    }
 
 
 
@@ -100,7 +183,7 @@ public class Enseignant extends Utilisateur{
 
   
 
-	public void printppl() throws IOException, GeneralSecurityException{  
+	public void download_all_coursework() throws IOException, GeneralSecurityException{  
         
                 File wrapper_folder = new File("./ClassroomCompteRendu");
                 if (! wrapper_folder.exists())
@@ -152,6 +235,7 @@ public class Enseignant extends Utilisateur{
                     }
                 }
 
+                System.out.println("------Total downloads size : " +super.humanReadableByteCountBin(super.download_size)+" -------");
 
 	}
 

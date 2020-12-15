@@ -12,6 +12,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
 import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.*;
 import java.io.File;
 import java.io.OutputStream;
@@ -24,19 +25,32 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+
+
 
 public class Utilisateur{
 
 	private String nom;
 	private String prenom;
 	private String Etablissement;
+	protected long download_size=0;
+	public void file_download(String file_id,String file_name,  String saving_path,  Drive drive_service) throws IOException{
 
-	public void file_download(String file_id,String file_name,  String saving_path, Drive drive_service) throws IOException{
+		FileOutputStream outputstream = new FileOutputStream(saving_path+"/"+file_name);
 
-		OutputStream outputStream = new FileOutputStream(saving_path+"/"+file_name);
-		drive_service.files().get(file_id).executeMediaAndDownloadTo(outputStream);
-		outputStream.flush();
-		outputStream.close();
+
+
+		drive_service.files().get(file_id).executeMediaAndDownloadTo(outputstream);
+
+		FileChannel fchannel = outputstream.getChannel();
+        long fileSize = fchannel.size();
+        this.download_size += fileSize;
+        System.out.println("SIZE OF THIS FILE "+fileSize);
+
+		outputstream.flush();
+		outputstream.close();
 		
 	}
 
@@ -55,6 +69,21 @@ public class Utilisateur{
         }      
     }
 
+
     }
+	public static String humanReadableByteCountBin(long bytes) {
+	    long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+	    if (absB < 1024) {
+	        return bytes + " B";
+	    }
+	    long value = absB;
+	    CharacterIterator ci = new StringCharacterIterator("KMGTPE");
+	    for (int i = 40; i >= 0 && absB > 0xfffccccccccccccL >> i; i -= 10) {
+	        value >>= 10;
+	        ci.next();
+	    }
+	    value *= Long.signum(bytes);
+	    return String.format("%.1f %ciB", value / 1024.0, ci.current());
+	}
 
 }
