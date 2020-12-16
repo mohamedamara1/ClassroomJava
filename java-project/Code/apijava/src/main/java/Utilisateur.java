@@ -47,7 +47,6 @@ public class Utilisateur{
 		FileChannel fchannel = outputstream.getChannel();
         long fileSize = fchannel.size();
         this.download_size += fileSize;
-        System.out.println("SIZE OF THIS FILE "+fileSize);
 
 		outputstream.flush();
 		outputstream.close();
