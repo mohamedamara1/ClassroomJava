@@ -28,7 +28,6 @@ public class ClassroomQuickstart {
     private static final String APPLICATION_NAME = "Google Classroom API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens/classroomtoken";
-
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
@@ -44,7 +43,8 @@ public class ClassroomQuickstart {
         );
     //private static final ImmutableList<String> SCOPES = ImmutableList.of(
      //   "ClassroomScopes.CLASSROOM_COURSES", "ClassroomScopes.CLASSROOM_ANNOUNCEMENTS");
-    private static final String CREDENTIALS_FILE_PATH = "/credentials-classroom.json";
+    private static final String CREDENTIALS_FILE_PATH = Principal.class_path;
+
 
     /**
      * Creates an authorized Credential object.
@@ -77,6 +77,5 @@ public class ClassroomQuickstart {
                 .build();
                 return service;
     }
-
 
 }
